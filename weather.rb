@@ -5,7 +5,7 @@ require "pry"
 require "open-uri"
 
 
-# 実行は ruby weather.rb
+# 実行は ruby main.rb
 
 # 佐賀県の地域を表示
 csv_data = CSV.read("sagapre.csv")
@@ -25,17 +25,18 @@ def select_region
   while true
     print "住んでいる地域を上記から選択してください ＞"
     num = gets.to_i
-    break if num >= 1 && num <= 6
-
+    break if num >= 1 && num <= 2
+  
+  end
     # 実行
     num
-  end
+  
 end
 
-num = select_region
 
 
-def date(csv_date, num)
+
+def data(csv_data, num)
   response = open("http://weather.livedoor.com/forecast/webservice/json/v1?city=#{csv_data[num - 1][2].to_i}")
 
   parse_text = JSON.parse(response.read)
@@ -43,13 +44,11 @@ def date(csv_date, num)
   parse_text["forecasts"]
 end
 
-puts "**********************"
-
 
 
 def weather_forecast_result(result, csv_data, num)
   tomorrow = Date.today + 1
-  tomorrow_climate = csv_data_okinawa[select_num - 1][1]
+  tomorrow_climate = csv_data[select_num - 1][1]
   tomorrow_weather = result[0]["telop"]
   tomorrow_temperature = (result[1]["temperature"]["max"]["celsius"]).to_i
 
@@ -63,9 +62,9 @@ def weather_forecast_result(result, csv_data, num)
 
   def temparature_info
     if tomorrow_weather.include?("雨")
-      puts "雨の可能性が有ります注意してください"
+      puts "雨の恐れが有りますご注意を"
     else
-      puts "ランニング日和です"
+      puts "ランニング日和になりそうです"
     end
   end
 
